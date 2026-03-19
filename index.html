@@ -5,147 +5,315 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Портфолио | Иван Петров</title>
     <style>
-        /* --- Основные стили --- */
+        /* --- Настройки переменных и сброс --- */
         :root {
-            --bg-color: #0f172a;
+            --bg-color: #050505;
             --text-color: #e2e8f0;
-            --accent-color: #38bdf8;
-            --card-bg: #1e293b;
+            --accent-color: #00f2ea;
+            --accent-secondary: #ff0055;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --cursor-size: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; /* Скрываем стандартный курсор */
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            margin: 0;
+            overflow-x: hidden;
             line-height: 1.6;
         }
 
+        /* --- Живой фон --- */
+        .background-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #050505 100%);
+            z-index: -2;
+        }
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.4;
+            animation: float 10s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-color);
+            top: -50px;
+            left: -50px;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent-secondary);
+            bottom: -100px;
+            right: -100px;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 50px); }
+        }
+
+        /* --- Кастомный курсор --- */
+        .cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--cursor-size);
+            height: var(--cursor-size);
+            border: 2px solid var(--accent-color);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background-color 0.3s;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s;
+        }
+
+        /* Эффект при наведении на активные элементы */
+        body.hovered .cursor {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(0, 242, 234, 0.2);
+            border-color: transparent;
+        }
+
+        /* --- Контейнер и Типографика --- */
         .container {
             max-width: 900px;
             margin: 0 auto;
             padding: 0 20px;
         }
 
-        /* --- Шапка --- */
         header {
-            padding: 60px 0;
+            padding: 100px 0 60px;
             text-align: center;
         }
 
         h1 {
-            font-size: 3rem;
+            font-size: 4rem;
             margin-bottom: 10px;
-            color: var(--accent-color);
+            background: linear-gradient(90deg, var(--accent-color), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
         }
 
         .subtitle {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             color: #94a3b8;
+            height: 30px; /* Фиксируем высоту для печатной машинки */
         }
 
-        /* --- Секции --- */
+        /* --- Секции и Карточки --- */
         section {
-            padding: 40px 0;
-            border-bottom: 1px solid #334155;
+            padding: 60px 0;
+            opacity: 0; /* Скрыто для анимации появления */
+            transform: translateY(50px);
+            transition: all 0.8s ease-out;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         h2 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            color: var(--accent-color);
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            position: relative;
+            display: inline-block;
         }
 
-        /* --- Стек технологий --- */
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+        }
+
         .skills-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 15px;
         }
 
         .skill-tag {
             background-color: var(--card-bg);
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 10px 20px;
+            border-radius: 30px;
             font-weight: bold;
-            border: 1px solid #334155;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
         }
 
-        /* --- Проекты --- */
+        .skill-tag:hover {
+            background-color: var(--accent-color);
+            color: #000;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--accent-color);
+        }
+
         .projects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
         }
 
         .project-card {
             background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 10px;
-            transition: transform 0.2s;
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.4s;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.03), transparent);
+            transform: translateX(-100%);
+            transition: 0.5s;
+        }
+
+        .project-card:hover::before {
+            transform: translateX(100%);
         }
 
         .project-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px);
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 30px rgba(0, 242, 234, 0.1);
         }
 
         .project-title {
-            font-size: 1.4rem;
-            margin-bottom: 10px;
-            color: white;
-        }
-
-        .project-desc {
-            font-size: 0.95rem;
-            color: #cbd5e1;
+            font-size: 1.5rem;
             margin-bottom: 15px;
+            color: #fff;
         }
 
         .btn {
             display: inline-block;
-            background-color: var(--accent-color);
-            color: var(--bg-color);
-            padding: 8px 16px;
+            margin-top: 15px;
+            padding: 10px 25px;
+            background: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            border-radius: 50px;
             text-decoration: none;
-            border-radius: 5px;
             font-weight: bold;
-            margin-right: 10px;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background-color: var(--accent-color);
+            z-index: -1;
+            transition: 0.3s;
         }
 
         .btn:hover {
-            opacity: 0.9;
+            color: #000;
         }
 
-        /* --- Контакты --- */
+        .btn:hover::before {
+            width: 100%;
+        }
+
         .contact-links a {
-            color: var(--accent-color);
-            font-size: 1.2rem;
-            margin-right: 20px;
+            color: #fff;
+            font-size: 1.5rem;
+            margin-right: 30px;
             text-decoration: none;
+            transition: 0.3s;
+            display: inline-block;
         }
 
-        /* --- Адаптивность для телефонов --- */
-        @media (max-width: 600px) {
-            h1 { font-size: 2.2rem; }
-            .container { padding: 0 15px; }
+        .contact-links a:hover {
+            color: var(--accent-color);
+            transform: translateY(-5px);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .cursor, .cursor-follower { display: none; } /* На телефонах курсор не нужен */
+            * { cursor: auto; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Фон -->
+    <div class="background-gradient"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <!-- Курсор -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
     <div class="container">
         
-        <!-- Шапка -->
         <header>
             <h1>Иван Петров</h1>
-            <p class="subtitle">Начинающий Python / Web Разработчик</p>
-            <p>Учусь создавать удобные приложения и решать сложные задачи кодом.</p>
+            <p class="subtitle" id="typewriter"></p>
         </header>
 
-        <!-- Обо мне -->
         <section id="about">
             <h2>Обо мне</h2>
-            <p>
+            <p style="font-size: 1.1rem; color: #cbd5e1;">
                 Привет! Я начинающий разработчик из Москвы. Мне нравится разбираться, как работают технологии изнутри. 
                 Сейчас я активно изучаю <strong>Python</strong> и основы <strong>Frontend</strong>. 
                 Я быстро учусь, умею гуглить ошибки и люблю чистый код.
@@ -154,48 +322,42 @@
             </p>
         </section>
 
-        <!-- Навыки -->
         <section id="skills">
             <h2>Мой Стек</h2>
             <div class="skills-grid">
                 <span class="skill-tag">Python</span>
                 <span class="skill-tag">HTML5 & CSS3</span>
-                <span class="skill-tag">JavaScript (Basic)</span>
+                <span class="skill-tag">JavaScript</span>
                 <span class="skill-tag">Git / GitHub</span>
                 <span class="skill-tag">VS Code</span>
                 <span class="skill-tag">SQL</span>
-                <span class="skill-tag">Linux</span>
+                <span class="skill-tag">React (Basic)</span>
             </div>
         </section>
 
-        <!-- Проекты -->
         <section id="projects">
             <h2>Мои Проекты</h2>
             <div class="projects-grid">
                 
-                <!-- Проект 1 -->
                 <article class="project-card">
                     <h3 class="project-title">Telegram Бот</h3>
                     <p class="project-desc">
                         Бот для отслеживания курса валют. Умеет присылать уведомления при изменении цены.
                     </p>
                     <a href="#" class="btn">GitHub</a>
-                    <!-- <a href="#" class="btn">Демо</a> -->
                 </article>
 
-                <!-- Проект 2 -->
                 <article class="project-card">
                     <h3 class="project-title">Сайт-визитка</h3>
                     <p class="project-desc">
                         Адаптивный сайт, сверстанный на чистом HTML/CSS. Практика верстки и Flexbox.
                     </p>
                     <a href="#" class="btn">GitHub</a>
-                    <a href="#" class="btn">Смотреть</a>
+                    <a href="#" class="btn">Демо</a>
                 </article>
 
-                <!-- Проект 3 -->
                 <article class="project-card">
-                    <h3 class="project-title">To-Do List</h3>
+                    <h3 class="project-title">To-Do List App</h3>
                     <p class="project-desc">
                         Простое приложение для списка задач. Использует LocalStorage для сохранения данных.
                     </p>
@@ -205,21 +367,112 @@
             </div>
         </section>
 
-        <!-- Контакты -->
         <section id="contact">
             <h2>Связаться со мной</h2>
-            <p>Я открыт для стажировок и предложений о работе.</p>
+            <p style="margin-bottom: 20px;">Я открыт для стажировок и предложений о работе.</p>
             <div class="contact-links">
-                <a href="mailto:email@example.com">Email</a>
-                <a href="https://t.me/твой_ник">Telegram</a>
-                <a href="https://github.com/твой_ник">GitHub</a>
+                <a href="#" class="hover-target">Email</a>
+                <a href="#" class="hover-target">Telegram</a>
+                <a href="#" class="hover-target">GitHub</a>
             </div>
         </section>
 
-        <footer style="text-align: center; padding: 20px; color: #64748b; font-size: 0.9rem;">
+        <footer style="text-align: center; padding: 40px; color: #64748b; font-size: 0.9rem;">
             &copy; 2023 Иван Петров. Сделано с любовью к коду.
         </footer>
 
     </div>
+
+    <script>
+        // --- 1. Логика Курсора ---
+        const cursor = document.querySelector('.cursor');
+        const follower = document.querySelector('.cursor-follower');
+        const hoverTargets = document.querySelectorAll('a, button, .skill-tag, .project-card');
+
+        let posX = 0, posY = 0;
+        let mouseX = 0, mouseY = 0;
+
+        // Отслеживаем движение мыши
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            // Маленькая точка следует мгновенно
+            cursor.style.left = mouseX + 'px';
+            cursor.style.top = mouseY + 'px';
+        });
+
+        // Большой круг следует с задержкой (плавность)
+        setInterval(() => {
+            posX += (mouseX - posX) / 9;
+            posY += (mouseY - posY) / 9;
+            
+            follower.style.left = posX + 'px';
+            follower.style.top = posY + 'px';
+        }, 10);
+
+        // Эффект при наведении на интерактивные элементы
+        hoverTargets.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                document.body.classList.add('hovered');
+            });
+            el.addEventListener('mouseleave', () => {
+                document.body.classList.remove('hovered');
+            });
+        });
+
+        // --- 2. Анимация при скролле (Intersection Observer) ---
+        const observerOptions = {
+            threshold: 0.1 // Элемент должен появиться на 10%
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // --- 3. Эффект печатной машинки ---
+        const textElement = document.getElementById('typewriter');
+        const phrases = ["Frontend Разработчик", "Python Энтузиаст", "Любитель чистого кода"];
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let typeSpeed = 100;
+
+        function type() {
+            const currentPhrase = phrases[phraseIndex];
+            
+            if (isDeleting) {
+                textElement.textContent = currentPhrase.substring(0, charIndex - 1);
+                charIndex--;
+                typeSpeed = 50; // Быстрее удаляем
+            } else {
+                textElement.textContent = currentPhrase.substring(0, charIndex + 1);
+                charIndex++;
+                typeSpeed = 100; // Нормальная скорость печати
+            }
+
+            if (!isDeleting && charIndex === currentPhrase.length) {
+                isDeleting = true;
+                typeSpeed = 2000; // Пауза перед удалением
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                typeSpeed = 500; // Пауза перед новой фразой
+            }
+
+            setTimeout(type, typeSpeed);
+        }
+
+        document.addEventListener('DOMContentLoaded', type);
+
+    </script>
 </body>
 </html>
