@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Портфолио | Иван Петров</title>
     <style>
-        /* --- Настройки переменных и сброс --- */
+        /* --- Настройки переменных --- */
         :root {
             --bg-color: #050505;
             --text-color: #e2e8f0;
             --accent-color: #00f2ea;
             --accent-secondary: #ff0055;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --cursor-size: 20px;
+            --card-bg: rgba(255, 255, 255, 0.03);
         }
 
         * {
@@ -30,7 +29,7 @@
             line-height: 1.6;
         }
 
-        /* --- Живой фон --- */
+        /* --- Оптимизированный фон --- */
         .background-gradient {
             position: fixed;
             top: 0;
@@ -48,6 +47,7 @@
             z-index: -1;
             opacity: 0.4;
             animation: float 10s infinite ease-in-out;
+            will-change: transform; /* Подсказка браузеру для оптимизации */
         }
 
         .orb-1 {
@@ -72,20 +72,22 @@
             50% { transform: translate(30px, 50px); }
         }
 
-        /* --- Кастомный курсор --- */
+        /* --- Кастомный курсор (Оптимизированный) --- */
         .cursor {
             position: fixed;
             top: 0;
             left: 0;
-            width: var(--cursor-size);
-            height: var(--cursor-size);
+            width: 20px;
+            height: 20px;
             border: 2px solid var(--accent-color);
             border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
-            transform: translate(-50%, -50%);
+            /* Важно: используем translate3d для GPU ускорения */
+            transform: translate3d(-50%, -50%, 0); 
             transition: width 0.3s, height 0.3s, background-color 0.3s;
             mix-blend-mode: difference;
+            will-change: transform;
         }
 
         .cursor-follower {
@@ -98,19 +100,19 @@
             border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
-            transform: translate(-50%, -50%);
-            transition: transform 0.1s;
+            transform: translate3d(-50%, -50%, 0);
+            /* Убираем transition здесь, чтобы анимация была плавной через JS */
+            will-change: transform;
         }
 
-        /* Эффект при наведении на активные элементы */
         body.hovered .cursor {
             width: 50px;
             height: 50px;
-            background-color: rgba(0, 242, 234, 0.2);
+            background-color: rgba(0, 242, 234, 0.15);
             border-color: transparent;
         }
 
-        /* --- Контейнер и Типографика --- */
+        /* --- Контент --- */
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -134,15 +136,14 @@
         .subtitle {
             font-size: 1.5rem;
             color: #94a3b8;
-            height: 30px; /* Фиксируем высоту для печатной машинки */
+            height: 30px;
         }
 
-        /* --- Секции и Карточки --- */
         section {
             padding: 60px 0;
-            opacity: 0; /* Скрыто для анимации появления */
+            opacity: 0;
             transform: translateY(50px);
-            transition: all 0.8s ease-out;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); /* Более приятная кривая анимации */
         }
 
         section.visible {
@@ -206,22 +207,6 @@
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(10px);
-        }
-
-        .project-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.03), transparent);
-            transform: translateX(-100%);
-            transition: 0.5s;
-        }
-
-        .project-card:hover::before {
-            transform: translateX(100%);
         }
 
         .project-card:hover {
@@ -288,14 +273,13 @@
 
         @media (max-width: 768px) {
             h1 { font-size: 2.5rem; }
-            .cursor, .cursor-follower { display: none; } /* На телефонах курсор не нужен */
+            .cursor, .cursor-follower { display: none; }
             * { cursor: auto; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Фон -->
     <div class="background-gradient"></div>
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
@@ -344,7 +328,7 @@
                     <p class="project-desc">
                         Бот для отслеживания курса валют. Умеет присылать уведомления при изменении цены.
                     </p>
-                    <a href="#" class="btn">GitHub</a>
+                    <a href="#" class="btn hover-target">GitHub</a>
                 </article>
 
                 <article class="project-card">
@@ -352,8 +336,8 @@
                     <p class="project-desc">
                         Адаптивный сайт, сверстанный на чистом HTML/CSS. Практика верстки и Flexbox.
                     </p>
-                    <a href="#" class="btn">GitHub</a>
-                    <a href="#" class="btn">Демо</a>
+                    <a href="#" class="btn hover-target">GitHub</a>
+                    <a href="#" class="btn hover-target">Демо</a>
                 </article>
 
                 <article class="project-card">
@@ -361,7 +345,7 @@
                     <p class="project-desc">
                         Простое приложение для списка задач. Использует LocalStorage для сохранения данных.
                     </p>
-                    <a href="#" class="btn">GitHub</a>
+                    <a href="#" class="btn hover-target">GitHub</a>
                 </article>
 
             </div>
@@ -384,34 +368,40 @@
     </div>
 
     <script>
-        // --- 1. Логика Курсора ---
+        // --- 1. Плавный Курсор (Optimized with requestAnimationFrame) ---
         const cursor = document.querySelector('.cursor');
         const follower = document.querySelector('.cursor-follower');
-        const hoverTargets = document.querySelectorAll('a, button, .skill-tag, .project-card');
+        const hoverTargets = document.querySelectorAll('.hover-target, .skill-tag, .project-card');
 
-        let posX = 0, posY = 0;
         let mouseX = 0, mouseY = 0;
+        let posX = 0, posY = 0;
+        let followerX = 0, followerY = 0;
 
-        // Отслеживаем движение мыши
+        // Слушаем движение мыши
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            
-            // Маленькая точка следует мгновенно
-            cursor.style.left = mouseX + 'px';
-            cursor.style.top = mouseY + 'px';
         });
 
-        // Большой круг следует с задержкой (плавность)
-        setInterval(() => {
-            posX += (mouseX - posX) / 9;
-            posY += (mouseY - posY) / 9;
-            
-            follower.style.left = posX + 'px';
-            follower.style.top = posY + 'px';
-        }, 10);
+        // Функция анимации (запускается 60 раз в секунду)
+        function animateCursor() {
+            // Маленькая точка двигается мгновенно за мышью
+            cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
 
-        // Эффект при наведении на интерактивные элементы
+            // Большая точка двигается с задержкой (плавность)
+            // Формула линейной интерполяции (Lerp)
+            followerX += (mouseX - followerX) * 0.15; 
+            followerY += (mouseY - followerY) * 0.15;
+
+            follower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0) translate(-50%, -50%)`;
+
+            requestAnimationFrame(animateCursor);
+        }
+
+        // Запускаем анимацию
+        animateCursor();
+
+        // Эффект при наведении
         hoverTargets.forEach(el => {
             el.addEventListener('mouseenter', () => {
                 document.body.classList.add('hovered');
@@ -421,9 +411,9 @@
             });
         });
 
-        // --- 2. Анимация при скролле (Intersection Observer) ---
+        // --- 2. Анимация появления при скролле ---
         const observerOptions = {
-            threshold: 0.1 // Элемент должен появиться на 10%
+            threshold: 0.1
         };
 
         const observer = new IntersectionObserver((entries) => {
@@ -452,27 +442,26 @@
             if (isDeleting) {
                 textElement.textContent = currentPhrase.substring(0, charIndex - 1);
                 charIndex--;
-                typeSpeed = 50; // Быстрее удаляем
+                typeSpeed = 50;
             } else {
                 textElement.textContent = currentPhrase.substring(0, charIndex + 1);
                 charIndex++;
-                typeSpeed = 100; // Нормальная скорость печати
+                typeSpeed = 100;
             }
 
             if (!isDeleting && charIndex === currentPhrase.length) {
                 isDeleting = true;
-                typeSpeed = 2000; // Пауза перед удалением
+                typeSpeed = 2000;
             } else if (isDeleting && charIndex === 0) {
                 isDeleting = false;
                 phraseIndex = (phraseIndex + 1) % phrases.length;
-                typeSpeed = 500; // Пауза перед новой фразой
+                typeSpeed = 500;
             }
 
             setTimeout(type, typeSpeed);
         }
 
         document.addEventListener('DOMContentLoaded', type);
-
     </script>
 </body>
 </html>
