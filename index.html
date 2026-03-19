@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Портфолио | Иван Петров</title>
+    <style>
+        /* --- Основные стили --- */
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #e2e8f0;
+            --accent-color: #38bdf8;
+            --card-bg: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* --- Шапка --- */
+        header {
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #94a3b8;
+        }
+
+        /* --- Секции --- */
+        section {
+            padding: 40px 0;
+            border-bottom: 1px solid #334155;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+        }
+
+        /* --- Стек технологий --- */
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-tag {
+            background-color: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            border: 1px solid #334155;
+        }
+
+        /* --- Проекты --- */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .project-card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            transition: transform 0.2s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .project-title {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .project-desc {
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        /* --- Контакты --- */
+        .contact-links a {
+            color: var(--accent-color);
+            font-size: 1.2rem;
+            margin-right: 20px;
+            text-decoration: none;
+        }
+
+        /* --- Адаптивность для телефонов --- */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.2rem; }
+            .container { padding: 0 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Шапка -->
+        <header>
+            <h1>Иван Петров</h1>
+            <p class="subtitle">Начинающий Python / Web Разработчик</p>
+            <p>Учусь создавать удобные приложения и решать сложные задачи кодом.</p>
+        </header>
+
+        <!-- Обо мне -->
+        <section id="about">
+            <h2>Обо мне</h2>
+            <p>
+                Привет! Я начинающий разработчик из Москвы. Мне нравится разбираться, как работают технологии изнутри. 
+                Сейчас я активно изучаю <strong>Python</strong> и основы <strong>Frontend</strong>. 
+                Я быстро учусь, умею гуглить ошибки и люблю чистый код.
+                <br><br>
+                В свободное время решаю задачи на LeetCode и читаю техническую документацию.
+            </p>
+        </section>
+
+        <!-- Навыки -->
+        <section id="skills">
+            <h2>Мой Стек</h2>
+            <div class="skills-grid">
+                <span class="skill-tag">Python</span>
+                <span class="skill-tag">HTML5 & CSS3</span>
+                <span class="skill-tag">JavaScript (Basic)</span>
+                <span class="skill-tag">Git / GitHub</span>
+                <span class="skill-tag">VS Code</span>
+                <span class="skill-tag">SQL</span>
+                <span class="skill-tag">Linux</span>
+            </div>
+        </section>
+
+        <!-- Проекты -->
+        <section id="projects">
+            <h2>Мои Проекты</h2>
+            <div class="projects-grid">
+                
+                <!-- Проект 1 -->
+                <article class="project-card">
+                    <h3 class="project-title">Telegram Бот</h3>
+                    <p class="project-desc">
+                        Бот для отслеживания курса валют. Умеет присылать уведомления при изменении цены.
+                    </p>
+                    <a href="#" class="btn">GitHub</a>
+                    <!-- <a href="#" class="btn">Демо</a> -->
+                </article>
+
+                <!-- Проект 2 -->
+                <article class="project-card">
+                    <h3 class="project-title">Сайт-визитка</h3>
+                    <p class="project-desc">
+                        Адаптивный сайт, сверстанный на чистом HTML/CSS. Практика верстки и Flexbox.
+                    </p>
+                    <a href="#" class="btn">GitHub</a>
+                    <a href="#" class="btn">Смотреть</a>
+                </article>
+
+                <!-- Проект 3 -->
+                <article class="project-card">
+                    <h3 class="project-title">To-Do List</h3>
+                    <p class="project-desc">
+                        Простое приложение для списка задач. Использует LocalStorage для сохранения данных.
+                    </p>
+                    <a href="#" class="btn">GitHub</a>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- Контакты -->
+        <section id="contact">
+            <h2>Связаться со мной</h2>
+            <p>Я открыт для стажировок и предложений о работе.</p>
+            <div class="contact-links">
+                <a href="mailto:email@example.com">Email</a>
+                <a href="https://t.me/твой_ник">Telegram</a>
+                <a href="https://github.com/твой_ник">GitHub</a>
+            </div>
+        </section>
+
+        <footer style="text-align: center; padding: 20px; color: #64748b; font-size: 0.9rem;">
+            &copy; 2023 Иван Петров. Сделано с любовью к коду.
+        </footer>
+
+    </div>
+</body>
+</html>
